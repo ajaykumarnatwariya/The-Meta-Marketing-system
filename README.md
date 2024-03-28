@@ -33,6 +33,10 @@ A FastAPI-based API for managing metadata for Adsets, Groups, and Campaigns in t
    - API documentation: `http://localhost:8000/docs`
    - Sample data endpoints: `http://localhost:8000/adsets`, `http://localhost:8000/campaigns`, `http://localhost:8000/groups`
 
+## Python Version
+
+This project is built using Python 3.12.2.
+
 ## Structure
 
 - **api/**: Contains modules for handling API routes.
