@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter
 from database.database import SessionLocal
 from database.models import Adset, Group, Campaign
-from models.custom_response import CustomResponse
+from utils.custom_response import CustomResponse
 
 router = APIRouter()
 
@@ -170,3 +170,47 @@ def delete_adset(adset_id: int):
         return CustomResponse(status_code=200, message="Adset deleted successfully", data=None)
     except Exception as e:
         return CustomResponse(status_code=500, message="Failed to delete adset", error=str(e))
+
+@router.get("/campaigns/{campaign_id}/adsets", response_model=CustomResponse, tags=["adsets"])
+def get_adsets_by_campaign_id(campaign_id: int):
+    """Get all adsets within a campaign.
+
+    Args:
+        campaign_id (int): The ID of the campaign.
+
+    Returns:
+        CustomResponse: Response containing status code, message, and data.
+    """
+    try:
+        db = SessionLocal()
+        campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+        if not campaign:
+            return CustomResponse(status_code=404, message="Campaign not found", data=None)
+
+        adsets = db.query(Adset).filter(Adset.campaign_id == campaign_id).all()
+        adsets_json = [adset.to_json() for adset in adsets]
+        return CustomResponse(status_code=200, message="Success", data=adsets_json)
+    except Exception as e:
+        return CustomResponse(status_code=500, message="Failed to retrieve adsets", error=str(e))
+
+@router.get("/groups/{group_id}/adsets", response_model=CustomResponse, tags=["adsets"])
+def get_adsets_by_group_id(group_id: int):
+    """Get all adsets within a group.
+
+    Args:
+        group_id (int): The ID of the group.
+
+    Returns:
+        CustomResponse: Response containing status code, message, and data.
+    """
+    try:
+        db = SessionLocal()
+        group = db.query(Group).filter(Group.id == group_id).first()
+        if not group:
+            return CustomResponse(status_code=404, message="Group not found", data=None)
+
+        adsets = group.adsets
+        adsets_json = [adset.to_json() for adset in adsets]
+        return CustomResponse(status_code=200, message="Success", data=adsets_json)
+    except Exception as e:
+        return CustomResponse(status_code=500, message="Failed to retrieve adsets", error=str(e))

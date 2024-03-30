@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from database.database import SessionLocal
 from database.models import Campaign
-from models.custom_response import CustomResponse
+from utils.custom_response import CustomResponse
 
 router = APIRouter()
 

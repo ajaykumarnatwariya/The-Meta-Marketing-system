@@ -20,7 +20,7 @@ def test_db():
 client = TestClient(app)
 
 def test_create_campaign(test_db):
-    response = client.post("/campaigns", params={"name": "Test Campaign"}).json()
+    response = client.post("/campaigns", params={"name": "Test Campaign", "objective": "None"}).json()
     assert response["status_code"] == 201
     assert response["message"] == "Campaign created successfully"
     assert response["data"]["name"] == "Test Campaign"
@@ -59,12 +59,13 @@ def test_update_campaign(test_db):
     test_db.add(campaign)
     test_db.commit()
 
-    response = client.put(f"/campaigns/{campaign.id}", params={"name": "New Name"}).json()
+    response = client.put(f"/campaigns/{campaign.id}", params={"name": "New Name", "objective": "None"}).json()
+    print(response)
     assert response["status_code"] == 200
     assert response["data"]["name"] == "New Name"
 
 def test_delete_campaign(test_db):
-    campaign = Campaign(name="Test Campaign")
+    campaign = Campaign(name="Test Campaign", objective="None")
     test_db.add(campaign)
     test_db.commit()
 

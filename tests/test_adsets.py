@@ -84,3 +84,35 @@ def test_delete_adset(test_db):
     response = client.delete(f"/adsets/{adset.id}").json()
     assert response["status_code"] == 200
     assert response["message"] == "Adset deleted successfully"
+
+def test_get_adsets_by_campaign_id(test_db):
+    campaign = Campaign(name="Test Campaign")
+    test_db.add(campaign)
+    test_db.commit()
+
+    adset1 = Adset(name="Adset 1", optimization_goal="Reach", campaign=campaign)
+    adset2 = Adset(name="Adset 2", optimization_goal="Link Clicks", campaign=campaign)
+    test_db.add(adset1)
+    test_db.add(adset2)
+    test_db.commit()
+
+    response = client.get(f"/campaigns/{campaign.id}/adsets").json()
+    assert response["status_code"] == 200
+    assert len(response["data"]) == 2
+
+def test_get_adsets_by_group_id(test_db):
+    group = Group(name="Test Group")
+    test_db.add(group)
+    test_db.commit()
+
+    adset1 = Adset(name="Adset 1", optimization_goal="Reach")
+    adset2 = Adset(name="Adset 2", optimization_goal="Link Clicks")
+    adset1.groups.append(group)
+    adset2.groups.append(group)
+    test_db.add(adset1)
+    test_db.add(adset2)
+    test_db.commit()
+
+    response = client.get(f"/groups/{group.id}/adsets").json()
+    assert response["status_code"] == 200
+    assert len(response["data"]) == 2
